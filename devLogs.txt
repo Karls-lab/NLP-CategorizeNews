@@ -1,0 +1,14 @@
+Potential Features:
+1. Bag of words
+2. Word Embeddings, Word2Vec
+3. N-grams
+4. Part of Speech Tagging
+5. Named Entity Recognition
+6. Sentiment Analysis
+7. Topic Modeling 
+
+
+
+TODO: 
+    Train the entire fake news corpus with word2doc
+    then run the model on each sentence to vectorized it.
