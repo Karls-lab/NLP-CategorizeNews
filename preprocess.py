@@ -26,12 +26,11 @@ def lemmatizeSentence(text):
 
 """ Train the Doc2Vec model on the given text and save it to the given path"""
 def trainDoc2Vec(text, modelPath):
-    print(f'Text: {text[0:30]}\n')
-    print(f'creating model saved to: {modelPath}')
+    print(f'Training model on text: {text[0:200]}')
+    print(f'creating model saved to: {modelPath}\n')
     tokens = lemmatizeSentence(text)
     tagged_data = [TaggedDocument(words=words, tags=[str(i)]) for i, words in enumerate(tokens)]
-    print(f'Tagged data: {tagged_data[0:5]}')
-    model = Doc2Vec(vector_size=10, window=5, min_count=1, epochs=20)
+    model = Doc2Vec(vector_size=10, window=50, min_count=1, epochs=32)
     model.build_vocab(tagged_data)
     model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)    
     model.save(modelPath)

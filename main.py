@@ -15,7 +15,7 @@ def main():
 
     print(X_train.head())
     print(y_train.head())
-    history = model.fit(X_train, y_train, epochs=50, batch_size=64)
+    history = model.fit(X_train, y_train, epochs=6, batch_size=64)
     model.reset_weights()
     
 

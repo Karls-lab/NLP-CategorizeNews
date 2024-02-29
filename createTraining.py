@@ -10,17 +10,8 @@ realNewsModel = os.path.join(root, 'models', 'real_titles.bin')
 
 
 def createDoc2Vec(filename, modelPath):
-    # train doc2vec model on a subset of the data
     df = pd.read_csv(os.path.join(root, 'data', filename))
     df = df.drop(columns=['tweet_ids', 'id'])
-    
-    # check if the model exists already
-    modelPath = modelPath.split('.')[0] + '.bin'
-    if os.path.exists(modelPath):
-        print(f'Model {modelPath.split("/")[-1]} already exists')
-        return
-
-    # train model on all of the sentences 
     allSentences = ' '.join(df['title'])
     trainDoc2Vec(allSentences, modelPath)
 
