@@ -1,36 +1,25 @@
-import os
+from preprocess import splitTrainingData
+from model import NLTK_Binary_Classifier
+import os 
 import pandas as pd
-from preprocess import trainDoc2Vec, vectorizeSentence
 
-"""
-target = real(0) or fake(1)
-"""
+def main():
+    root = os.path.dirname(os.path.abspath(__file__))
+    dfReal = pd.read_csv(os.path.join(root, 'data', 'politifact_real.csv_vectorized.csv'))
+    dfFake = pd.read_csv(os.path.join(root, 'data', 'politifact_fake.csv_vectorized.csv'))
+    df = pd.concat([dfReal, dfFake])
+    columns = df.columns
+    X_train, X_test, y_train, y_test = splitTrainingData(df, columns[1:], 'target')
+    model = NLTK_Binary_Classifier()
+    model.compile()
 
-root = os.path.dirname(os.path.abspath(__file__))
-
-def createVectorizedDataset(filename):
-    df = pd.read_csv(os.path.join(root, 'data', filename))
-    df = df.head(50)
-
-    df = df.drop(columns=['tweet_ids', 'id'])
-    df['target'] = 1
-    print(df.head(10))
-
-    # train model on all of the sentences 
-    modelPath = os.path.join(root, 'data', 'all_titles.bin')
-    title_string = ' '.join(df['title'])
-    trainDoc2Vec(title_string, modelPath)
-
-    # Vectorize each sentence
-    for index, row in df.iterrows():
-        df.at[index, 'title'] = vectorizeSentence(row['title'], modelPath)
-
-    # save the df 
-    newName = filename + '_vectorized.csv'
-    df.to_csv(os.path.join(root, 'data', newName), index=False)
+    print(X_train.head())
+    print(y_train.head())
+    history = model.fit(X_train, y_train, epochs=50, batch_size=64)
+    model.reset_weights()
+    
 
 
-createVectorizedDataset('politifact_fake.csv')
-# createVectorizedDataset('politifact_real.csv')
 
-# combine both datasets
+if __name__ == '__main__':
+    main()

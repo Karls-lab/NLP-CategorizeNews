@@ -6,13 +6,16 @@ from keras.callbacks import LearningRateScheduler
 from keras.optimizers.schedules import ExponentialDecay
 from keras.layers import Dropout
 from sklearn.base import BaseEstimator, ClassifierMixin
+from keras.losses import BinaryCrossentropy 
 
 
 class NLTK_Binary_Classifier(BaseEstimator, ClassifierMixin):
     def __init__(self):
         self.model = Sequential([
-            self.DenseLayer(32, activation='relu'),
-            Dropout(0.2),
+            self.DenseLayer(4096, activation='relu'),
+            self.DenseLayer(1024, activation='relu'),
+            self.DenseLayer(4096, activation='relu'),
+            self.DenseLayer(512, activation='relu'),
             self.DenseLayer(1, activation='sigmoid'),
         ])
 
@@ -31,14 +34,10 @@ class NLTK_Binary_Classifier(BaseEstimator, ClassifierMixin):
 
     # compile the model
     def compile(self):
-        self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+        self.model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['accuracy'])
 
     # Run the model. Forward fit using a learning rate scheduler
-    def fit(self, training_images, training_labels, epochs=1, batch_size=32):
+    def fit(self, X, training_labels, epochs=1, batch_size=32):
         lr_scheduler = ExponentialDecay(initial_learning_rate=0.001, decay_steps=1, decay_rate=.1)
-        self.model.fit(training_images, training_labels, epochs=epochs, 
+        self.model.fit(X, training_labels, epochs=epochs, 
                     batch_size=batch_size, callbacks=[LearningRateScheduler(lr_scheduler)])
-
-# display model summary
-model = NLTK_Binary_Classifier()
-model.model.summary()

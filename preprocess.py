@@ -1,4 +1,5 @@
 import nltk
+from sklearn.model_selection import train_test_split
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
@@ -11,8 +12,9 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 
+
+""" Tokenization, Stopwords removal and Lemmatization """
 def lemmatizeSentence(text):
-    # Tokenization, Stopwords removal and Lemmatization
     tokenizer = RegexpTokenizer(r'\w+')
     tokens = tokenizer.tokenize(text.lower())
     stop_words = set(stopwords.words('english'))
@@ -22,17 +24,17 @@ def lemmatizeSentence(text):
     return lemmatized_tokens
 
 
-def trainDoc2Vec(text, savePath):
-    print(f'save path: {savePath}')
+""" Train the Doc2Vec model on the given text and save it to the given path"""
+def trainDoc2Vec(text, modelPath):
+    print(f'Text: {text[0:30]}\n')
+    print(f'creating model saved to: {modelPath}')
     tokens = lemmatizeSentence(text)
-    """ Compute Doc2Vec Embedding """
     tagged_data = [TaggedDocument(words=words, tags=[str(i)]) for i, words in enumerate(tokens)]
+    print(f'Tagged data: {tagged_data[0:5]}')
     model = Doc2Vec(vector_size=10, window=5, min_count=1, epochs=20)
     model.build_vocab(tagged_data)
-    model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)
-    sentence_embedding = model.infer_vector(tokens)
-
-    model.save(savePath)
+    model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)    
+    model.save(modelPath)
 
 
 def vectorizeSentence(text, modelPath):
@@ -42,5 +44,10 @@ def vectorizeSentence(text, modelPath):
     return sentence_embedding
 
 
+def splitTrainingData(df, featureCols, targetCol, random=False):
+    state = 42 if random else None
+    X = df[featureCols]
+    y = df[targetCol]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=state)
+    return X_train, X_test, y_train, y_test
 
-    # tagged_data = [TaggedDocument(words=lemmatized_tokens, tags=[str(index)])]
