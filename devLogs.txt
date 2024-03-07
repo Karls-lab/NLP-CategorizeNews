@@ -8,7 +8,8 @@ Potential Features:
 7. Topic Modeling 
 
 
-
-TODO: 
-    Train the entire fake news corpus with word2doc
-    then run the model on each sentence to vectorized it.
+TODO:
+    Yes! I finally got training to work and the accuracy is really high! Whoo! 
+    Next up, make sure the model is generalizable, so test it on another subset 
+    of the data. 
+    Also, run the model on some random news headlines I find on the internet. 
